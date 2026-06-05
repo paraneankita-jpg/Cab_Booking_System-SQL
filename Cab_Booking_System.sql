@@ -136,3 +136,93 @@ FeedbackDate) VALUES
 (402, 202, 3.0, 'Driver was late', '2024-10-02'), 
 (403, 204, 5.0, 'Excellent service', '2024-10-04'), 
 (404, 205, 2.5, 'Cab was not clean', '2024-10-05');
+
+-- Step 3 :: Business Analysis & Use Cases
+
+-- 1. Customer and Booking Analysis
+
+SELECT c.CustomerID, c.Name, COUNT(*) AS CompletedBookings 
+FROM Customers c 
+JOIN Bookings b ON c.CustomerID = b.CustomerID 
+WHERE b.Status = 'Completed' 
+GROUP BY c.CustomerID, c.Name 
+ORDER BY CompletedBookings DESC;
+
+--Insight: Helps identify loyal, engaged customers who complete bookings regularly.Use the SQL 
+--questions listed above to analyze:
+
+
+-- 2. Customers with More Than 30% Cancellations
+
+SELECT CustomerID,  
+       SUM(CASE WHEN Status = 'Canceled' THEN 1 ELSE 0 END) AS   
+Cancelled, 
+       COUNT(*) AS Total, 
+       ROUND(100.0 * SUM(CASE WHEN Status = 'Canceled' THEN 1 ELSE 0 
+END) / COUNT(*), 2) AS CancellationRate 
+FROM Bookings 
+GROUP BY CustomerID 
+HAVING CancellationRate > 30;
+
+-- Insight: Identifies customers with a high cancellation rate. These might be users with 
+-- erratic plans or bad app experience. 
+
+-- 3. Busiest Day of the Week
+
+SELECT DATE_FORMAT(BookingDate, "%W") AS DayOfWeek, COUNT(*) AS 
+TotalBookings 
+FROM Bookings 
+GROUP BY DATE_FORMAT(BookingDate, "%W") 
+ORDER BY TotalBookings DESC; 
+
+-- Insight: Reveals demand trends for resource and marketing planning.
+
+-- 4. Drivers with Average Rating < 3 in Last 3 Months 
+
+SELECT d.DriverID, d.Name, AVG(f.Rating) AS AvgRating 
+FROM Drivers d 
+JOIN Cabs c ON d.DriverID = c.DriverID 
+JOIN Bookings b ON c.CabID = b.CabID 
+JOIN Feedback f ON b.BookingID = f.BookingID 
+WHERE f.Rating IS NOT NULL AND f.FeedbackDate >= DATE_SUB(NOW(),INTERVAL 3 MONTH)
+GROUP BY d.DriverID, d.Name 
+HAVING AVG(f.Rating) < 3.0;    
+
+-- Insight: Spot underperforming drivers who might need training or action. 
+
+-- 5. Drivers with High Cancellation Rate (>25%)
+SELECT d.DriverID, d.Name, SUM(t.DistanceKM) AS TotalDistance 
+FROM Drivers d 
+JOIN Cabs c ON d.DriverID = c.DriverID 
+JOIN Bookings b ON c.CabID = b.CabID 
+JOIN TripDetails t ON b.BookingID = t.BookingID 
+WHERE b.Status = 'Completed' 
+GROUP BY d.DriverID, d.Name 
+ORDER BY TotalDistance DESC 
+LIMIT 5;     
+  
+  -- Insight: Recognize driver behavior issues early and improve service.
+
+  -- 6. Monthly Revenue in the Last 6 Months
+  
+SELECT d.DriverID, d.Name, 
+       SUM(CASE WHEN b.Status = 'Canceled' THEN 1 ELSE 0 END) * 
+100.0 / COUNT(*) AS CancellationRate 
+FROM Drivers d 
+JOIN Cabs c ON d.DriverID = c.DriverID 
+JOIN Bookings b ON c.CabID = b.CabID 
+GROUP BY d.DriverID, d.Name 
+HAVING CancellationRate > 25;
+
+-- Insight: Observe monthly income trends for financial forecasting.
+
+-- 8. Top 3 Routes by Booking Volume
+
+SELECT MONTH(t.EndTime) AS Month,
+       SUM(t.Fare) AS Revenue
+FROM TripDetails t
+JOIN Bookings b ON t.BookingID = b.BookingID
+WHERE b.Status = 'Completed'
+  AND t.EndTime >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+GROUP BY MONTH(t.EndTime)
+ORDER BY Month;
