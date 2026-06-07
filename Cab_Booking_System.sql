@@ -229,7 +229,7 @@ ORDER BY Month;
 
 -- Insight: Popular routes help optimize pricing and fleet assignment.
 
--- Driver Ratings vs Earnings
+-- 9.Driver Ratings vs Earnings
 
 SELECT d.DriverID, AVG(f.Rating) AS AvgRating, COUNT(*) AS 
 TotalTrips, SUM(t.Fare) AS TotalEarnings 
@@ -242,3 +242,15 @@ GROUP BY d.DriverID
 ORDER BY AvgRating DESC;
 
 -- Insight: Analyze the relationship between earnings and customer satisfaction
+
+-- 10. Average Wait Time Per Pickup Location
+
+SELECT PickupLocation,
+       AVG(TIMESTAMPDIFF(MINUTE, b.BookingDate, t.StartTime)) AS AvgWaitTimeMins
+FROM Bookings b
+JOIN TripDetails t ON b.BookingID = t.BookingID
+WHERE b.Status = 'Completed'
+GROUP BY PickupLocation
+ORDER BY AvgWaitTimeMins DESC; 
+ 
+-- Insight: Identify bottlenecks and long wait times by location.
