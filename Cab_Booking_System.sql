@@ -226,3 +226,19 @@ WHERE b.Status = 'Completed'
   AND t.EndTime >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
 GROUP BY MONTH(t.EndTime)
 ORDER BY Month;
+
+-- Insight: Popular routes help optimize pricing and fleet assignment.
+
+-- Driver Ratings vs Earnings
+
+SELECT d.DriverID, AVG(f.Rating) AS AvgRating, COUNT(*) AS 
+TotalTrips, SUM(t.Fare) AS TotalEarnings 
+FROM Drivers d 
+JOIN Cabs c ON d.DriverID = c.DriverID 
+JOIN Bookings b ON c.CabID = b.CabID 
+JOIN Feedback f ON b.BookingID = f.BookingID 
+JOIN TripDetails t ON b.BookingID = t.BookingID 
+GROUP BY d.DriverID 
+ORDER BY AvgRating DESC;
+
+-- Insight: Analyze the relationship between earnings and customer satisfaction
