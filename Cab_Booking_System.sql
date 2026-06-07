@@ -266,3 +266,20 @@ GROUP BY PickupLocation
 ORDER BY AvgWaitTimeMins DESC;
 
 -- Insight: Directly learn why users cancel most often.
+
+-- 12. Revenue by Trip Type (Short vs Long) 
+SELECT 
+    CASE  
+        WHEN DistanceKM < 5 THEN 'Short' 
+        ELSE 'Long' 
+    END AS TripType, 
+    COUNT(*) AS NumTrips, 
+    SUM(Fare) AS TotalRevenue 
+FROM TripDetails 
+GROUP BY  
+    CASE  
+        WHEN DistanceKM < 5 THEN 'Short' 
+        ELSE 'Long' 
+    END;
+
+-- Insight: Compare how much short and long trips contribute to business.
