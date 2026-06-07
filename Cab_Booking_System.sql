@@ -254,3 +254,15 @@ GROUP BY PickupLocation
 ORDER BY AvgWaitTimeMins DESC; 
  
 -- Insight: Identify bottlenecks and long wait times by location.
+
+-- 11. Common Cancellation Reasons
+
+SELECT PickupLocation,
+       AVG(TIMESTAMPDIFF(MINUTE, b.BookingDate, t.StartTime)) AS AvgWaitTimeMins
+FROM Bookings b
+JOIN TripDetails t ON b.BookingID = t.BookingID
+WHERE b.Status = 'Completed'
+GROUP BY PickupLocation
+ORDER BY AvgWaitTimeMins DESC;
+
+-- Insight: Directly learn why users cancel most often.
