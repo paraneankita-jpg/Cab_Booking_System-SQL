@@ -302,4 +302,14 @@ GROUP BY
 
 -- Insight: Optimize fleet planning based on vehicle profitability.
 
--- 14. Predict Customer Churn
+-- 14. Predict Customer Churn 
+
+SELECT c.VehicleType, SUM(t.Fare) AS Revenue 
+FROM Cabs c 
+JOIN Bookings b ON c.CabID = b.CabID 
+JOIN TripDetails t ON b.BookingID = t.BookingID 
+WHERE b.Status = 'Completed' 
+GROUP BY c.VehicleType; 
+
+-- Insight: Identify at-risk customers for re-engagement campaigns.
+
