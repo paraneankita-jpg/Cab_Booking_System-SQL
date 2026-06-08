@@ -313,3 +313,25 @@ GROUP BY c.VehicleType;
 
 -- Insight: Identify at-risk customers for re-engagement campaigns.
 
+-- 15. Weekend vs Weekday Performance
+
+SELECT
+    CASE
+        WHEN DAYNAME(BookingDate) IN ('Saturday', 'Sunday')
+        THEN 'Weekend'
+        ELSE 'Weekday'
+    END AS DayType,
+    COUNT(*) AS TotalBookings,
+    SUM(t.Fare) AS TotalRevenue
+FROM Bookings b
+JOIN TripDetails t
+    ON b.BookingID = t.BookingID
+GROUP BY
+    CASE
+        WHEN DAYNAME(BookingDate) IN ('Saturday', 'Sunday')
+        THEN 'Weekend'
+        ELSE 'Weekday'
+    END;
+
+    -- Insight: Understand day-of-week trends for promotional planning.
+    
