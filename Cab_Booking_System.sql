@@ -283,3 +283,23 @@ GROUP BY
     END;
 
 -- Insight: Compare how much short and long trips contribute to business.
+
+-- 13. Sedan vs SUV Revenue Comparison
+
+SELECT 
+    CASE  
+        WHEN DistanceKM < 5 THEN 'Short' 
+        ELSE 'Long' 
+    END AS TripType, 
+    COUNT(*) AS NumTrips, 
+    SUM(Fare) AS TotalRevenue 
+FROM TripDetails 
+GROUP BY  
+    CASE  
+        WHEN DistanceKM < 5 THEN 'Short' 
+        ELSE 'Long' 
+    END;
+
+-- Insight: Optimize fleet planning based on vehicle profitability.
+
+-- 14. Predict Customer Churn
