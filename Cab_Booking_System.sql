@@ -3,7 +3,7 @@
 create database cab_booking_system;
 use cab_booking_system;
 
-#   Customers table
+--  Customers table
 
 CREATE TABLE Customers ( 
     CustomerID INT PRIMARY KEY, 
@@ -12,7 +12,7 @@ CREATE TABLE Customers (
     RegistrationDate DATE 
 );
 
-#  Drivers table
+--  Drivers table
 
 CREATE TABLE Drivers (
     DriverID INT PRIMARY KEY,
@@ -20,7 +20,7 @@ CREATE TABLE Drivers (
     joindate DATE
     );
 
-    # cabs table
+--  cabs table
 
 CREATE TABLE Cabs (
     CabID INT PRIMARY KEY,
@@ -334,4 +334,3 @@ GROUP BY
     END;
 
     -- Insight: Understand day-of-week trends for promotional planning.
-    
